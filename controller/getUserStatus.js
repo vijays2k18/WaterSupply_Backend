@@ -3,8 +3,9 @@ import Requested from '../models/Requested.js';
 import Delivery from '../models/Delivery.js';
 import Approved from '../models/Approved.js';
 import UserStatus from '../models/UserStatus.js';
+import authenticateJWT from '../middleware/authentication.js';
 const getuserstatus = express();
-
+getuserstatus.use(authenticateJWT);
 // Get all UserStatus
 getuserstatus.get('/users/status', async (req, res) => {
   try {

@@ -1,8 +1,13 @@
 import express from 'express';
 import User from '../models/getuser.js';  // Import the User model
+import authenticateJWT from '../middleware/authentication.js';
+import jwt from 'jsonwebtoken';  // Import the authentication middleware
 
 const getUser = express.Router();
+const JWT_SECRET = process.env.JWT_SECRET;
 
+
+// POST: Login using phone number
 // POST: Login using phone number
 getUser.post('/api/login', async (req, res) => {
   const { phone_number } = req.body;
@@ -19,19 +24,27 @@ getUser.post('/api/login', async (req, res) => {
       return res.status(404).json({ message: 'User not found.' });
     }
 
-    // Respond with user details or a token (if needed)
-    res.status(200).json({ message: 'Login successful.', user });
+    // Generate JWT token
+    const token = jwt.sign({ phone_number: user.phone_number, id: user.id }, JWT_SECRET, { expiresIn: '1h' });
+
+    // Respond with success and token
+    res.status(200).json({
+      message: 'Login successful.',
+      token, // Send token back to the client
+    });
   } catch (err) {
     console.error('Error during login:', err.message);
     res.status(500).json({ message: 'Internal Server Error' });
   }
 });
 
+// Use authentication middleware on all routes that need authentication
+getUser.use(authenticateJWT);
 
 // POST: Create a new user
 getUser.post('/api/users', async (req, res) => {
   const { name, phone_number, address } = req.body;
-  
+
   try {
     const newUser = await User.create({
       name,
