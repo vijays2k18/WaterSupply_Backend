@@ -5,6 +5,7 @@ import Approved from '../models/Approved.js';
 import UserStatus from '../models/UserStatus.js';
 const getuserstatus = express();
 
+// Get all UserStatus
 getuserstatus.get('/users/status', async (req, res) => {
   try {
     // Retrieve all user statuses from the user_status table
