@@ -3,6 +3,31 @@ import User from '../models/getuser.js';  // Import the User model
 
 const getUser = express.Router();
 
+// POST: Login using phone number
+getUser.post('/api/login', async (req, res) => {
+  const { phone_number } = req.body;
+
+  if (!phone_number) {
+    return res.status(400).json({ message: 'Phone number is required.' });
+  }
+
+  try {
+    // Find the user by phone number
+    const user = await User.findOne({ where: { phone_number } });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
+
+    // Respond with user details or a token (if needed)
+    res.status(200).json({ message: 'Login successful.', user });
+  } catch (err) {
+    console.error('Error during login:', err.message);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+
 // POST: Create a new user
 getUser.post('/api/users', async (req, res) => {
   const { name, phone_number, address } = req.body;
