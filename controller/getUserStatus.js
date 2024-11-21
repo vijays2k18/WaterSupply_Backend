@@ -4,54 +4,83 @@ import Delivery from '../models/Delivery.js';
 import Approved from '../models/Approved.js';
 import UserStatus from '../models/UserStatus.js';
 import authenticateJWT from '../middleware/authentication.js';
+import colors from 'colors'; // Import colors package
+
 const getuserstatus = express();
 getuserstatus.use(authenticateJWT);
+
 // Get all UserStatus
 getuserstatus.get('/users/status', async (req, res) => {
   try {
+    console.log('Fetching all user statuses'.blue);
+
     // Retrieve all user statuses from the user_status table
-    const userStatuses = await UserStatus.findAll();  // Fetch all records from the table
+    const userStatuses = await UserStatus.findAll();
 
     if (!userStatuses || userStatuses.length === 0) {
+      console.warn('No user statuses found'.yellow);
       return res.status(404).json({ message: 'No user statuses found' });
     }
 
-    // Return the list of user statuses
+    console.log('User statuses retrieved successfully'.green);
     res.status(200).json(userStatuses);
   } catch (err) {
-    console.error('Error fetching user statuses:', err.message);
+    console.error('Error fetching user statuses:'.red, err.message);
     res.status(500).json({ message: 'Internal Server Error' });
   }
 });
 
 getuserstatus.post('/user/requested', (req, res) => {
-  console.log(req.body);  // Log the entire body to check the structure
-  const id = req.body.userId; 
-  console.log(id);  // Check if it's coming through correctly
+  console.log('Request received for setting status to Requested'.blue);
+  console.log('Request body:'.cyan, req.body); // Log the entire body
+  const id = req.body.userId;
+  console.log(`User ID: ${id}`.magenta);
 
   Requested(id)
-    .then(() => res.status(200).json({ message: 'User status set to Requested' }))
-    .catch((err) => res.status(500).json({ message: err.message }));
+    .then(() => {
+      console.log(`User status set to Requested for ID: ${id}`.green);
+      res.status(200).json({ message: 'User status set to Requested' });
+    })
+    .catch((err) => {
+      console.error('Error setting user status to Requested:'.red, err.message);
+      res.status(500).json({ message: err.message });
+    });
 });
 
 getuserstatus.post('/user/approved', (req, res) => {
-  const id = parseInt(req.body.userId);  // Get the user ID from the request body
+  console.log('Request received for setting status to Approved'.blue);
+  const id = parseInt(req.body.userId);
+  console.log(`User ID: ${id}`.magenta);
+
   Approved(id)
-    .then(() => res.status(200).json({ message: 'User status set to Approved' }))
-    .catch((err) => res.status(500).json({ message: err.message }));
+    .then(() => {
+      console.log(`User status set to Approved for ID: ${id}`.green);
+      res.status(200).json({ message: 'User status set to Approved' });
+    })
+    .catch((err) => {
+      console.error('Error setting user status to Approved:'.red, err.message);
+      res.status(500).json({ message: err.message });
+    });
 });
 
 getuserstatus.post('/user/delivery', (req, res) => {
-  const id = parseInt(req.body.userId);  // Get the user ID from the request body
+  console.log('Request received for setting status to Delivery'.blue);
+  const id = parseInt(req.body.userId);
+  console.log(`User ID: ${id}`.magenta);
+
   Delivery(id)
-    .then(() => res.status(200).json({ message: 'User status set to Delivery' }))
-    .catch((err) => res.status(500).json({ message: err.message }));
+    .then(() => {
+      console.log(`User status set to Delivery for ID: ${id}`.green);
+      res.status(200).json({ message: 'User status set to Delivery' });
+    })
+    .catch((err) => {
+      console.error('Error setting user status to Delivery:'.red, err.message);
+      res.status(500).json({ message: err.message });
+    });
 });
 
-
 getuserstatus.listen(3000, () => {
-  console.log('Server running on port 3000');
+  console.log('Server running on port 3000'.cyan);
 });
 
 export default getuserstatus;
-
