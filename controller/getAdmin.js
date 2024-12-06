@@ -32,6 +32,29 @@ getAdmin.post('/admin/create', async (req, res) => {
 });
 
 // Login API with token generation
+getAdmin.post('/admin/login', async (req, res) => {
+  try {
+    const { username, password } = req.body;
 
+    // Validate username and password
+    const admin = await Admin.findOne({ where: { username, password } });
+    if (!admin) {
+      console.warn('Invalid username or password'.yellow);
+      return res.status(401).json({ error: 'Invalid username or password' });
+    }
+
+    // Generate JWT token with only username
+    const token = jwt.sign({ username: admin.username }, JWT_SECRET, {
+      expiresIn: '1h', // Token expiration time
+    });
+
+    console.log('Login successful'.cyan);
+    res.status(200).json({ message: 'Login successful', token });
+  } catch (error) {
+    console.error(`Error: ${error.message}`.red);
+    res.status(500).json({ error: error.message });
+  }
+  //token
+});
 
 export default getAdmin;
