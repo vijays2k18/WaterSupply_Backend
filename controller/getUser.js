@@ -148,6 +148,7 @@ getUser.delete('/api/users/:id', async (req, res) => {
 
     // Delete the user
     await user.destroy();
+    // update
 
     console.log(`User with ID ${userId} and associated entries deleted successfully`.green);
     res.status(200).json({ message: 'User and associated data deleted successfully' });
