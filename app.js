@@ -3,13 +3,11 @@ import dotenv from 'dotenv';
 import getuserstatus from './controller/getUserStatus.js';
 import router from './controller/getUser.js';
 import getAdmin from './controller/getAdmin.js';
-import cors from 'cors';
 
 dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 8080;
-app.use(cors(corsOptions));
 app.use(express.json()); // Use middleware to handle JSON requests
 
 // Use the getUser routes
