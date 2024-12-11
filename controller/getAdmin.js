@@ -4,9 +4,9 @@ import sequelize from '../middleware/db.js';
 import dotenv from 'dotenv';
 import authenticateJWT from '../middleware/authentication.js';
 import jwt from 'jsonwebtoken';
-import colors from 'colors'; // For colorful console logging
 import helmet from 'helmet'; // For security headers
 import cors from 'cors'; // For cross-origin resource sharing
+import colors from 'colors';
 dotenv.config();
 
 const getAdmin = express.Router();
