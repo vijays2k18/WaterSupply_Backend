@@ -41,7 +41,7 @@ AdminToken.post('/save-admin-token', async (req, res) => {
 });
 
 // Endpoint to send notification to admin
-AdminToken.post('/send-notification', async (req, res) => {
+AdminToken.post('/send-admin-notification', async (req, res) => {
   const { message } = req.body;
 
   if (!message) {
