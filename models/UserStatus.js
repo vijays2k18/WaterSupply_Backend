@@ -11,8 +11,8 @@ const UserStatus = sequelize.define('UserStatus', {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: 'users',  // References the 'users' table
-      key: 'Id'  // 'Id' is the primary key in the users table
+      model: 'users',
+      key: 'id', // Correct primary key of the users table
     },
   },
   requested: {

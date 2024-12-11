@@ -17,13 +17,6 @@ dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 8080;
-const corsOptions = {
-  origin: 'http://localhost:8080', // Replace with your frontend domain
-  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Specify allowed HTTP methods
-  allowedHeaders: ['Content-Type', 'Authorization'], // Specify allowed headers
-};
-
-app.use(cors(corsOptions));
 app.use(express.json()); // Use middleware to handle JSON requests
 
 // Use the getUser routes

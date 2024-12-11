@@ -3,6 +3,8 @@ import User from '../models/getuser.js';  // Import the User model
 import authenticateJWT from '../middleware/authentication.js';
 import jwt from 'jsonwebtoken';  // Import the authentication middleware
 import colors from 'colors';  // For colorful console logging
+import UserStatus from '../models/UserStatus.js';
+
 
 const getUser = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -37,7 +39,8 @@ getUser.post('/api/login', async (req, res) => {
     res.status(200).json({
       message: 'Login successful.',
       token, // Send token back to the client
-      userId: user.id, // Include the user ID in the response
+      userId: user.id, 
+      name: user.name// Include the user ID in the response
     });
   } catch (err) {
     console.error('Error during login:'.red, err.message);
@@ -54,18 +57,26 @@ getUser.post('/api/users', async (req, res) => {
   const { name, phone_number, address } = req.body;
 
   try {
+    // Check if the phone number already exists in the database
+    const existingUser = await User.findOne({ where: { phone_number } });
+    if (existingUser) {
+      return res.status(400).json({ message: 'Phone number already in use. Please use a different number.' });
+    }
+
+    // Create the new user if the phone number is unique
     const newUser = await User.create({
       name,
       phone_number,
       address,
     });
     console.log('User created successfully'.green);
-    res.status(201).json(newUser);  // Respond with the created user
+    res.status(201).json(newUser); // Respond with the created user
   } catch (err) {
     console.error('Error creating user:'.red, err.message);
     res.status(500).json({ message: 'Internal Server Error' });
   }
 });
+
 
 // GET: Get all users
 getUser.get('/api/users', async (req, res) => {
@@ -124,21 +135,30 @@ getUser.put('/api/users/:id', async (req, res) => {
 
 // DELETE: Delete a user by ID
 getUser.delete('/api/users/:id', async (req, res) => {
-  const userId = req.params.id;
+  const userId = req.params.id; // This is the user ID being passed
   try {
-    const user = await User.findByPk(userId);  // Find user by ID
+    const user = await User.findByPk(userId); // Find user by ID
     if (!user) {
       console.warn(`User with ID ${userId} not found`.yellow);
       return res.status(404).json({ message: 'User not found' });
     }
 
-    await user.destroy();  // Delete the user
-    console.log(`User with ID ${userId} deleted successfully`.green);
-    res.status(200).json({ message: 'User deleted' });  // Respond with a success message
+    // Delete associated entries in other tables
+    await UserStatus.destroy({ where: { user_id: userId } }); // Delete user's status entry
+    // User's orders or other associations should be handled similarly if applicable.
+
+    // Delete the user
+    await user.destroy();
+    // update
+
+    console.log(`User with ID ${userId} and associated entries deleted successfully`.green);
+    res.status(200).json({ message: 'User and associated data deleted successfully' });
   } catch (err) {
     console.error('Error deleting user:'.red, err.message);
     res.status(500).json({ message: 'Internal Server Error' });
   }
 });
+
+
 
 export default getUser;

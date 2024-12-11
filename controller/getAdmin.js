@@ -54,6 +54,7 @@ getAdmin.post('/admin/login', async (req, res) => {
     console.error(`Error: ${error.message}`.red);
     res.status(500).json({ error: error.message });
   }
+  //token
 });
 
 export default getAdmin;
