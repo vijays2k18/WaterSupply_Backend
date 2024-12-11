@@ -78,4 +78,31 @@ AdminToken.post('/send-admin-notification', async (req, res) => {
   }
 });
 
+// Endpoint to get admin token by user_id
+AdminToken.get('/get-admin-token/:user_id', async (req, res) => {
+  const { user_id } = req.params;
+
+  if (!user_id) {
+    return res.status(400).send({ error: 'User ID is required' });
+  }
+
+  try {
+    // Retrieve the admin token for the given user_id
+    const adminToken = await AdminToken.findOne({
+      where: { user_id: user_id },
+    });
+
+    if (!adminToken) {
+      return res.status(404).send({ error: 'Admin token not found for this user' });
+    }
+
+    // Return the admin token
+    return res.send({ success: true, admin_token: adminToken.admin_token });
+  } catch (error) {
+    console.error('Error retrieving admin token:', error);
+    return res.status(500).send({ error: 'Failed to retrieve admin token' });
+  }
+});
+
+
 export default AdminToken;

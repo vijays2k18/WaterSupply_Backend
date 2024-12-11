@@ -78,4 +78,31 @@ UserToken.post('/send-user-notification', async (req, res) => {
   }
 });
 
+// Endpoint to get user token by user_id
+UserToken.get('/get-user-token/:user_id', async (req, res) => {
+  const { user_id } = req.params;
+
+  if (!user_id) {
+    return res.status(400).send({ error: 'User ID is required' });
+  }
+
+  try {
+    // Retrieve the user token for the given user_id
+    const userToken = await UserToken.findOne({
+      where: { user_id: user_id },
+    });
+
+    if (!userToken) {
+      return res.status(404).send({ error: 'User token not found for this user' });
+    }
+
+    // Return the user token
+    return res.send({ success: true, user_token: userToken.admin_token });
+  } catch (error) {
+    console.error('Error retrieving user token:', error);
+    return res.status(500).send({ error: 'Failed to retrieve user token' });
+  }
+});
+
+
 export default UserToken;
