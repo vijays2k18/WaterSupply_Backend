@@ -6,31 +6,28 @@ import sequelize from '../middleware/db.js';
 const AdminToken1 = express.Router();
 
 // Endpoint to save admin FCM token
-AdminToken1.post('/save-admin-token', async (req, res) => {
-  const { user_id, token } = req.body;
+AdminToken1.post('/save-fcm-token', async (req, res) => {
+  const { user_id, fcm_token } = req.body;
 
-  if (!user_id || !token) {
-    return res.status(400).send({ error: 'User ID and FCM token are required' });
+  if (!user_id || !fcm_token) {
+    return res.status(400).json({ message: 'User ID and FCM token are required' });
   }
 
   try {
-    const existingToken = await AdminToken.findOne({
-      where: { user_id, admin_token: token }
+    // Update or create FCM token for the given admin user
+    const [adminToken, created] = await AdminToken.upsert({
+      user_id,
+      fcm_token,
     });
 
-    if (existingToken) {
-      return res.status(200).send({ success: true, message: 'Token already exists' });
-    }
-
-    await AdminToken.create({ user_id, admin_token: token });
-
-    return res.send({ success: true, message: 'Token saved successfully' });
+    return res.status(200).json({
+      message: created ? 'FCM token saved successfully' : 'FCM token updated successfully',
+    });
   } catch (error) {
-    console.error('Error saving admin token:', error);
-    return res.status(500).send({ error: 'Failed to save token' });
+    console.error('Error saving FCM token:', error);
+    return res.status(500).json({ message: 'Failed to save FCM token' });
   }
 });
-
 // Endpoint to send notification to admin
 AdminToken1.post('/send-admin-notification', async (req, res) => {
   const { message, userId } = req.body; // Accept userId in the request
