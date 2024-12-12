@@ -7,8 +7,8 @@ import cors from 'cors';
 import bodyParser from 'body-parser';
 import admin from 'firebase-admin';
 import fs from 'fs';
-import AdminToken1 from './models/AdminToken.js';
-import UserToken1 from './models/UserToken.js';
+import AdminToken1 from './controller/AdminToken.js';
+import UserToken1 from './controller/UserToken.js';
 // import cors from 'cors';
 const serviceAccount = JSON.parse(fs.readFileSync('./utils/pushnotification-e4015-firebase-adminsdk-i6gwb-097cc12c0d.json', 'utf8'));
 admin.initializeApp({
