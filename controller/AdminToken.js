@@ -42,18 +42,22 @@ AdminToken.post('/save-admin-token', async (req, res) => {
 
 // Endpoint to send notification to admin
 AdminToken.post('/send-admin-notification', async (req, res) => {
-  const { message } = req.body;
+  const { message, userId } = req.body; // Accept userId in the request
 
   if (!message) {
     return res.status(400).send({ error: 'Message is required' });
   }
 
+  if (!userId) {
+    return res.status(400).send({ error: 'User ID is required' });
+  }
+
   try {
-    // Retrieve all admin tokens from the database
-    const adminTokens = await AdminToken.findAll();
+    // Retrieve admin tokens for the specified user ID
+    const adminTokens = await AdminToken.findAll({ where: { user_id: userId } });
 
     if (adminTokens.length === 0) {
-      return res.status(400).send({ error: 'No admin tokens found' });
+      return res.status(400).send({ error: 'No admin tokens found for the specified user ID' });
     }
 
     // Prepare notification payload
@@ -64,19 +68,20 @@ AdminToken.post('/send-admin-notification', async (req, res) => {
       },
     };
 
-    // Send notifications to all saved admin tokens
+    // Send notifications to the retrieved admin tokens
     const promises = adminTokens.map((token) =>
       admin.messaging().sendToDevice(token.admin_token, payload)
     );
 
     await Promise.all(promises);
 
-    res.send({ success: true, message: 'Notification sent successfully' });
+    res.send({ success: true, message: `Notification sent successfully to user ID ${userId}` });
   } catch (error) {
     console.error('Error sending notification:', error);
     res.status(500).send({ error: 'Failed to send notification' });
   }
 });
+
 
 // Endpoint to get admin token by user_id
 AdminToken.get('/get-admin-token/:user_id', async (req, res) => {
