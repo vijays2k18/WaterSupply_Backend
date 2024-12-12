@@ -28,7 +28,7 @@ AdminToken.init(
   {
     sequelize, // passing the sequelize instance
     modelName: 'AdminToken', // Model name
-    tableName: 'AdminToken', // The name of the table in your database
+    tableName: 'admintoken', // The name of the table in your database
     timestamps: false, // Disable createdAt and updatedAt columns
   }
 );
