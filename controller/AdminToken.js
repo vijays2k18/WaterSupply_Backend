@@ -6,7 +6,7 @@ import sequelize from '../middleware/db.js';
 const AdminToken1 = express.Router();
 
 // Endpoint to save admin FCM token
-AdminToken1.post('/save-fcm-token', async (req, res) => {
+AdminToken1.post('/admintoken/save', async (req, res) => {
   const { user_id, admin_token } = req.body;  // Use 'admin_token' instead of 'fcm_token'
 
   // Validate input parameters
