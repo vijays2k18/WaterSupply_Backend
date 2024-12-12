@@ -45,7 +45,7 @@ AdminToken1.post('/admintoken/save', async (req, res) => {
 
 
 // Endpoint to send notification to admin
-AdminToken1.post('/send-admin-notification', async (req, res) => {
+AdminToken1.post('/admin/notification', async (req, res) => {
   const { message, userId } = req.body; // Accept userId in the request
 
   if (!message) {
