@@ -14,26 +14,17 @@ AdminToken1.post('/save-admin-token', async (req, res) => {
   }
 
   try {
-    // Check if the token already exists for the user
     const existingToken = await AdminToken.findOne({
-      where: {
-        user_id: user_id,
-        admin_token: token
-      }
+      where: { user_id, admin_token: token }
     });
 
     if (existingToken) {
       return res.status(200).send({ success: true, message: 'Token already exists' });
     }
 
-    // Save the new token in the AdminToken table
-    await AdminToken.create({
-      user_id: user_id,    // Link the token to a user
-      admin_token: token,  // Store the admin token
-    });
+    await AdminToken.create({ user_id, admin_token: token });
 
     return res.send({ success: true, message: 'Token saved successfully' });
-
   } catch (error) {
     console.error('Error saving admin token:', error);
     return res.status(500).send({ error: 'Failed to save token' });
