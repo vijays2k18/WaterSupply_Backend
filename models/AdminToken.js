@@ -2,7 +2,7 @@ import { Sequelize, DataTypes, Model } from 'sequelize';
 import sequelize from '../middleware/db.js';
 
 // Define the AdminToken model using class-based syntax
-class AdminToken extends Model {}
+new AdminToken extends Model ()
 
 AdminToken.init(
   {
