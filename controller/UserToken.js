@@ -3,10 +3,10 @@ import sequelize from '../middleware/db.js';
 import UserToken from '../models/UserToken.js';
 
 
-const UserToken = express.Router();
+const UserToken1 = express.Router();
 
 // Endpoint to save admin FCM token
-UserToken.post('/save-user-token', async (req, res) => {
+UserToken1.post('/save-user-token', async (req, res) => {
   const { user_id, token } = req.body;
 
   if (!user_id || !token) {
@@ -41,7 +41,7 @@ UserToken.post('/save-user-token', async (req, res) => {
 });
 
 // Endpoint to send notification to admin
-UserToken.post('/send-user-notification', async (req, res) => {
+UserToken1.post('/send-user-notification', async (req, res) => {
   const { message, userId } = req.body; // Accept userId in the request
 
   if (!message) {
@@ -83,7 +83,7 @@ UserToken.post('/send-user-notification', async (req, res) => {
 });
 
 // Endpoint to get user token by user_id
-UserToken.get('/get-user-token/:user_id', async (req, res) => {
+UserToken1.get('/get-user-token/:user_id', async (req, res) => {
   const { user_id } = req.params;
 
   if (!user_id) {
@@ -109,4 +109,4 @@ UserToken.get('/get-user-token/:user_id', async (req, res) => {
 });
 
 
-export default UserToken;
+export default UserToken1;
