@@ -23,7 +23,7 @@ const UserToken = sequelize.define('UserToken', {
     allowNull: false,  // Admin token cannot be null
   },
 }, {
-  tableName: 'UserToken',  // Table name in the database
+  tableName: 'usertoken',  // Table name in the database
   timestamps: false,       // No createdAt/updatedAt columns
 });
 
