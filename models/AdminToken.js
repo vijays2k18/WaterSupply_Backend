@@ -19,7 +19,7 @@ const AdminToken = sequelize.define('AdminToken', {
     onDelete: 'CASCADE', // Delete the admin token if the user is deleted
   },
   admin_token: {
-    type: DataTypes.STRING(1000),
+    type: DataTypes.STRING,
     allowNull: false,
   },
 }, {
