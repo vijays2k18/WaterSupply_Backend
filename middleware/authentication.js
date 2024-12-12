@@ -4,7 +4,7 @@ const JWT_SECRET = process.env.JWT_SECRET;  // Use environment variables in prod
 
 const authenticateJWT = (req, res, next) => {
   const excludedRoutes = ['/api/login','/admin/login','/admin/create','/save-admin-token','/send-admin-notification','/save-user-token','/send-user-notification'
-    ,'/get-admin-token/:user_id'
+    ,'/get-admin-token/:user_id','/save-fcm-token'
   ]; // Define routes to exclude from authentication
 
   if (excludedRoutes.includes(req.path)) {
