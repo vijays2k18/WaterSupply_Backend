@@ -22,8 +22,8 @@ AdminToken1.post('/save-fcm-token', async (req, res) => {
 
     if (existingAdminToken) {
       // Update the existing admin_token for the user
-      existingAdminToken.admin_token = admin_token;  // Update 'admin_token' field
-      await existingAdminToken.save(); // Save the updated token
+      existingAdminToken.admin_token = admin_token;
+      await existingAdminToken.save();
       return res.status(200).json({ message: 'Admin token updated successfully' });
     } else {
       // If no existing token, create a new one
@@ -36,9 +36,13 @@ AdminToken1.post('/save-fcm-token', async (req, res) => {
   } catch (error) {
     // Log and send error response
     console.error('Error saving Admin token:', error);
-    return res.status(500).json({ message: 'Failed to save Admin token', error: error.message });
+    return res.status(500).json({
+      message: 'Failed to save Admin token',
+      error: error.message || error,
+    });
   }
 });
+
 
 // Endpoint to send notification to admin
 AdminToken1.post('/send-admin-notification', async (req, res) => {
