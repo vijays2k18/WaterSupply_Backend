@@ -3,9 +3,7 @@ import jwt from 'jsonwebtoken';
 const JWT_SECRET = process.env.JWT_SECRET;  // Use environment variables in production
 
 const authenticateJWT = (req, res, next) => {
-  const excludedRoutes = ['/api/login','/admin/login','/admin/create','/save-admin-token','/send-admin-notification','/save-user-token','/send-user-notification'
-    ,'/get-admin-token/:user_id','/save-fcm-token','/get-admin-token'
-  ]; // Define routes to exclude from authentication
+  const excludedRoutes = ['/api/login','/admin/login','/admin/create']; // Define routes to exclude from authentication
 
   if (excludedRoutes.includes(req.path)) {
     return next(); // Skip authentication for excluded routes
