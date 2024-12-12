@@ -3,10 +3,10 @@ import AdminToken from '../models/AdminToken.js';
 import sequelize from '../middleware/db.js';
 
 
-const AdminToken = express.Router();
+const AdminToken1 = express.Router();
 
 // Endpoint to save admin FCM token
-AdminToken.post('/save-admin-token', async (req, res) => {
+AdminToken1.post('/save-admin-token', async (req, res) => {
   const { user_id, token } = req.body;
 
   if (!user_id || !token) {
@@ -41,7 +41,7 @@ AdminToken.post('/save-admin-token', async (req, res) => {
 });
 
 // Endpoint to send notification to admin
-AdminToken.post('/send-admin-notification', async (req, res) => {
+AdminToken1.post('/send-admin-notification', async (req, res) => {
   const { message, userId } = req.body; // Accept userId in the request
 
   if (!message) {
@@ -84,7 +84,7 @@ AdminToken.post('/send-admin-notification', async (req, res) => {
 
 
 // Endpoint to get admin token by user_id
-AdminToken.get('/get-admin-token/:user_id', async (req, res) => {
+AdminToken1.get('/get-admin-token/:user_id', async (req, res) => {
   const { user_id } = req.params;
 
   if (!user_id) {
@@ -110,4 +110,4 @@ AdminToken.get('/get-admin-token/:user_id', async (req, res) => {
 });
 
 
-export default AdminToken;
+export default AdminToken1;
