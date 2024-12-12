@@ -16,12 +16,6 @@ admin.initializeApp({
 });
 
 dotenv.config();
-app.use(cors({
-  origin: '*',  // or specify your app's domain here
-  methods: 'POST',
-  allowedHeaders: 'Content-Type'
-}));
-
 const app = express();
 const port = process.env.PORT || 3001;
 app.use(express.json()); // Use middleware to handle JSON requests
@@ -33,7 +27,11 @@ app.use(getAdmin);
 app.use(bodyParser.json());
 app.use(AdminToken1);
 app.use(UserToken1);
-
+app.use(cors({
+  origin: '*',  // or specify your app's domain here
+  methods: 'POST',
+  allowedHeaders: 'Content-Type'
+}));
 // Start the server
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
