@@ -7,7 +7,8 @@ import cors from 'cors';
 import bodyParser from 'body-parser';
 import admin from 'firebase-admin';
 import fs from 'fs';
-import AdminToken from './models/AdminToken.js';
+import AdminToken1 from './models/AdminToken.js';
+import UserToken1 from './models/UserToken.js';
 const serviceAccount = JSON.parse(fs.readFileSync('./utils/service.json', 'utf8'));
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -24,7 +25,8 @@ app.use(getuserstatus);
 app.use(router);
 app.use(getAdmin);
 app.use(bodyParser.json());
-app.use(AdminToken);
+app.use(AdminToken1);
+app.use(UserToken1);
 
 // Start the server
 app.listen(port, () => {
