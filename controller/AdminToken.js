@@ -7,27 +7,39 @@ const AdminToken1 = express.Router();
 
 // Endpoint to save admin FCM token
 AdminToken1.post('/save-fcm-token', async (req, res) => {
-  const { user_id, fcm_token } = req.body;
+  const { user_id, admin_token } = req.body;  // Use 'admin_token' instead of 'fcm_token'
 
-  if (!user_id || !fcm_token) {
-    return res.status(400).json({ message: 'User ID and FCM token are required' });
+  // Validate input parameters
+  if (!user_id || !admin_token) {
+    return res.status(400).json({ message: 'User ID and Admin token are required' });
   }
 
   try {
-    // Update or create FCM token for the given admin user
-    const [adminToken, created] = await AdminToken.upsert({
-      user_id,
-      fcm_token,
+    // Check if an AdminToken already exists for the given user_id
+    const existingAdminToken = await AdminToken.findOne({
+      where: { user_id },
     });
 
-    return res.status(200).json({
-      message: created ? 'FCM token saved successfully' : 'FCM token updated successfully',
-    });
+    if (existingAdminToken) {
+      // Update the existing admin_token for the user
+      existingAdminToken.admin_token = admin_token;  // Update 'admin_token' field
+      await existingAdminToken.save(); // Save the updated token
+      return res.status(200).json({ message: 'Admin token updated successfully' });
+    } else {
+      // If no existing token, create a new one
+      await AdminToken.create({
+        user_id,
+        admin_token,  // Store 'admin_token' in the new entry
+      });
+      return res.status(200).json({ message: 'Admin token saved successfully' });
+    }
   } catch (error) {
-    console.error('Error saving FCM token:', error);
-    return res.status(500).json({ message: 'Failed to save FCM token' });
+    // Log and send error response
+    console.error('Error saving Admin token:', error);
+    return res.status(500).json({ message: 'Failed to save Admin token', error: error.message });
   }
 });
+
 // Endpoint to send notification to admin
 AdminToken1.post('/send-admin-notification', async (req, res) => {
   const { message, userId } = req.body; // Accept userId in the request
