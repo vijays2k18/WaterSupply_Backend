@@ -64,6 +64,8 @@ AdminToken1.post('/admin/notification', async (req, res) => {
       return res.status(400).send({ error: 'No admin tokens found for the specified user ID' });
     }
 
+    console.log("Admin Tokens: ", adminTokens);
+
     // Prepare notification payload
     const payload = {
       notification: {
@@ -73,18 +75,25 @@ AdminToken1.post('/admin/notification', async (req, res) => {
     };
 
     // Send notifications to the retrieved admin tokens
-    const promises = adminTokens.map((token) =>
-      admin.messaging().sendToDevice(token.admin_token, payload)
-    );
+    const promises = adminTokens.map(async (token) => {
+      try {
+        await admin.messaging().sendToDevice(token.admin_token, payload);
+        console.log(`Notification sent to token: ${token.admin_token}`);
+      } catch (error) {
+        console.error(`Error sending notification to token: ${token.admin_token}`, error);
+      }
+    });
 
     await Promise.all(promises);
 
     res.send({ success: true, message: `Notification sent successfully to user ID ${userId}` });
   } catch (error) {
-    console.error('Error sending notification:', error);
-    res.status(500).send({ error: 'Failed to send notification' });
+    console.error('Error sending notification:', error.message);
+    console.error('Stack Trace:', error.stack);
+    res.status(500).send({ error: 'Failed to send notification', details: error.message });
   }
 });
+
 
 
 // Endpoint to get admin token by user_id
