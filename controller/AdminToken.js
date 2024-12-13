@@ -1,6 +1,7 @@
 import express from 'express';
 import AdminToken from '../models/AdminToken.js';
 import sequelize from '../middleware/db.js';
+import admin from 'firebase-admin';
 
 
 const AdminToken1 = express.Router();
@@ -8,7 +9,7 @@ const AdminToken1 = express.Router();
 // Endpoint to save admin FCM token
 AdminToken1.post('/admintoken/save', async (req, res) => {
   const { user_id, admin_token } = req.body;  // Use 'admin_token' instead of 'fcm_token'
-
+      console.log(req.body)
   // Validate input parameters
   if (!user_id || !admin_token) {
     return res.status(400).json({ message: 'User ID and Admin token are required' });
@@ -46,7 +47,7 @@ AdminToken1.post('/admintoken/save', async (req, res) => {
 
 // Endpoint to send notification to admin
 AdminToken1.post('/admin/notification', async (req, res) => {
-  const { message, userId } = req.body; // Accept userId in the request
+  const { message, userId } = req.body;
 
   if (!message) {
     return res.status(400).send({ error: 'Message is required' });
@@ -57,30 +58,35 @@ AdminToken1.post('/admin/notification', async (req, res) => {
   }
 
   try {
-    // Retrieve admin tokens for the specified user ID
-    const adminTokens = await AdminToken.findAll({ where: { user_id: userId } });
 
+    console.log("Admin tokens retrieved:", userId);
+    // Retrieve admin tokens for the specified user ID
+    const adminTokens = await AdminToken.findAll({
+      where: { user_id: userId }
+    });
+    console.log("Admin tokens retrieved:", adminTokens);
     if (adminTokens.length === 0) {
-      return res.status(400).send({ error: 'No admin tokens found for the specified user ID' });
+      return res.status(404).send({ error: 'No admin tokens found for the specified user ID' });
     }
 
-    console.log("Admin Tokens: ", adminTokens);
+    // Prepare notification payload and send notifications
+    const promises = adminTokens.map(async (tokenRecord) => {
+      const token = tokenRecord.dataValues.admin_token;
+      console.log("Admin tokens retrieved:", token);
 
-    // Prepare notification payload
-    const payload = {
-      notification: {
-        title: 'New Request',
-        body: message,
-      },
-    };
+      const payload = {
+        token: token, // Each token for individual notification
+        notification: {
+          title: 'New Request',
+          body: message,
+        },
+      };
 
-    // Send notifications to the retrieved admin tokens
-    const promises = adminTokens.map(async (token) => {
       try {
-        await admin.messaging().sendToDevice(token.admin_token, payload);
-        console.log(`Notification sent to token: ${token.admin_token}`);
+        await admin.messaging().send(payload);
+        console.log(`Notification sent successfully to token: ${token}`);
       } catch (error) {
-        console.error(`Error sending notification to token: ${token.admin_token}`, error);
+        console.error(`Error sending notification to token: ${token}`, error);
       }
     });
 
@@ -93,6 +99,7 @@ AdminToken1.post('/admin/notification', async (req, res) => {
     res.status(500).send({ error: 'Failed to send notification', details: error.message });
   }
 });
+
 
 
 
