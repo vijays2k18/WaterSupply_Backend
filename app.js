@@ -10,10 +10,10 @@ import fs from 'fs';
 import AdminToken1 from './controller/AdminToken.js';
 import UserToken1 from './controller/UserToken.js';
 // import cors from 'cors';
-const serviceAccount = JSON.parse(fs.readFileSync('./utils/watersupplypushnotification-firebase-adminsdk-u3gam-5757d1b3a5.json', 'utf8'));
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-});
+// const serviceAccount = JSON.parse(fs.readFileSync('./utils/watersupplypushnotification-firebase-adminsdk-u3gam-5757d1b3a5.json', 'utf8'));
+// admin.initializeApp({
+//   credential: admin.credential.cert(serviceAccount),
+// });
 
 dotenv.config();
 const app = express();
