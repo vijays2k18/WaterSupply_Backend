@@ -4,7 +4,7 @@ import authenticateJWT from '../middleware/authentication.js';
 import jwt from 'jsonwebtoken';  // Import the authentication middleware
 import colors from 'colors';  // For colorful console logging
 import UserStatus from '../models/UserStatus.js';
-
+import Admin from '../models/Admin.js';
 
 const getUser = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET;
