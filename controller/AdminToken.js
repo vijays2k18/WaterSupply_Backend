@@ -58,39 +58,37 @@ AdminToken1.post('/admin/notification', async (req, res) => {
   }
 
   try {
+    console.log("Fetching admin tokens for user ID:", userId);
 
-    console.log("Admin tokens retrieved:", userId);
     // Retrieve admin tokens for the specified user ID
     const adminTokens = await AdminToken.findAll({
       where: { user_id: userId }
     });
+
     console.log("Admin tokens retrieved:", adminTokens);
+
     if (adminTokens.length === 0) {
       return res.status(404).send({ error: 'No admin tokens found for the specified user ID' });
     }
 
-    // Prepare notification payload and send notifications
-    const promises = adminTokens.map(async (tokenRecord) => {
-      const token = tokenRecord.dataValues.admin_token;
-      console.log("Admin tokens retrieved:", token);
+    // Only send notification to the first admin token (for individual notification)
+    const token = adminTokens[0].dataValues.admin_token;
+    console.log("Sending notification to token:", token);
 
-      const payload = {
-        token: token, // Each token for individual notification
-        notification: {
-          title: 'New Request',
-          body: message,
-        },
-      };
+    const payload = {
+      token: token, // Send notification to a specific token
+      notification: {
+        title: 'New Water Request Received',  // Notification title
+        body: message, // Notification message
+      },
+    };
 
-      try {
-        await admin.messaging().send(payload);
-        console.log(`Notification sent successfully to token: ${token}`);
-      } catch (error) {
-        console.error(`Error sending notification to token: ${token}`, error);
-      }
-    });
-
-    await Promise.all(promises);
+    try {
+      await admin.messaging().send(payload);
+      console.log(`Notification sent successfully to token: ${token}`);
+    } catch (error) {
+      console.error(`Error sending notification to token: ${token}`, error);
+    }
 
     res.send({ success: true, message: `Notification sent successfully to user ID ${userId}` });
   } catch (error) {
@@ -99,6 +97,7 @@ AdminToken1.post('/admin/notification', async (req, res) => {
     res.status(500).send({ error: 'Failed to send notification', details: error.message });
   }
 });
+
 
 
 
