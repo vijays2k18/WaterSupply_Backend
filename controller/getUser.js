@@ -10,7 +10,6 @@ const getUser = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET;
 
 // POST: Login using phone number
-// POST: Login using phone number
 getUser.post('/api/login', async (req, res) => {
   const { phone_number } = req.body;
 
@@ -20,8 +19,16 @@ getUser.post('/api/login', async (req, res) => {
   }
 
   try {
-    // Find the user by phone number
-    const user = await User.findOne({ where: { phone_number } });
+    // Find the user by phone number, including the related Admin
+    const user = await User.findOne({
+      where: { phone_number },
+      include: [
+        {
+          model: Admin,  // Include the Admin model
+          attributes: ['id']  // Only fetch the admin ID
+        }
+      ]
+    });
 
     if (!user) {
       console.warn('User not found'.yellow);
@@ -39,15 +46,16 @@ getUser.post('/api/login', async (req, res) => {
     res.status(200).json({
       message: 'Login successful.',
       token, // Send token back to the client
-      userId: user.id, 
-      name: user.name,      // Include the user ID in the response
-      adminId: user.admin_id
+      userId: user.id,
+      name: user.name,
+      adminId: user.Admin ? user.Admin.id : null // Ensure to fetch the adminId from the related Admin model
     });
   } catch (err) {
     console.error('Error during login:'.red, err.message);
     res.status(500).json({ message: 'Internal Server Error' });
   }
 });
+
 
 
 // Use authentication middleware on all routes that need authentication
