@@ -54,13 +54,23 @@ getUser.use(authenticateJWT);
 
 // POST: Create a new user
 getUser.post('/api/users', async (req, res) => {
-  const { name, phone_number, address } = req.body;
+  const { name, phone_number, address, adminId } = req.body;
 
   try {
     // Check if the phone number already exists in the database
     const existingUser = await User.findOne({ where: { phone_number } });
     if (existingUser) {
-      return res.status(400).json({ message: 'Phone number already in use. Please use a different number.' });
+      return res.status(400).json({
+        message: 'Phone number already in use. Please use a different number.',
+      });
+    }
+
+    // Ensure the adminId exists in the Admin table
+    const adminExists = await Admin.findByPk(adminId);
+    if (!adminExists) {
+      return res.status(400).json({
+        message: 'Invalid admin ID. Please provide a valid admin ID.',
+      });
     }
 
     // Create the new user if the phone number is unique
@@ -68,7 +78,9 @@ getUser.post('/api/users', async (req, res) => {
       name,
       phone_number,
       address,
+      adminId, // Associate the user with the admin ID
     });
+
     console.log('User created successfully'.green);
     res.status(201).json(newUser); // Respond with the created user
   } catch (err) {
@@ -76,6 +88,7 @@ getUser.post('/api/users', async (req, res) => {
     res.status(500).json({ message: 'Internal Server Error' });
   }
 });
+
 
 
 // GET: Get all users
