@@ -40,7 +40,8 @@ getUser.post('/api/login', async (req, res) => {
       message: 'Login successful.',
       token, // Send token back to the client
       userId: user.id, 
-      name: user.name// Include the user ID in the response
+      name: user.name,      // Include the user ID in the response
+      adminId: user.admin_id
     });
   } catch (err) {
     console.error('Error during login:'.red, err.message);
