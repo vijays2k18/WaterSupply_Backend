@@ -1,5 +1,6 @@
 import { DataTypes } from 'sequelize';
 import sequelize from '../middleware/db.js'; // Assuming you have a database connection file
+import Admin from '../models/Admin.js';
 
 const User = sequelize.define('User', {
   id: {
